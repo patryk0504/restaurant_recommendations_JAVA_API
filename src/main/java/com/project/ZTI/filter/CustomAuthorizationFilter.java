@@ -4,11 +4,13 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.ZTI.security.Utility;
+import com.project.ZTI.security.AuthUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -27,7 +29,16 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
+@Component
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+
+    private AuthUtility authUtility;
+
+    @Autowired
+    public void setAuthUtility(AuthUtility authUtility) {
+        this.authUtility = authUtility;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -40,7 +51,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 try{
                     String token = authorizationHeader.substring("Bearer ".length());
                     //verify token
-                    JWTVerifier verifier = JWT.require(Utility.getAlgorithm()).build();
+                    JWTVerifier verifier = JWT.require(authUtility.getAlgorithm()).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String username = decodedJWT.getSubject();
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);

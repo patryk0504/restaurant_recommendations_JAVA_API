@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ZTI.models.user.ERole;
 import com.project.ZTI.models.user.Role;
 import com.project.ZTI.models.user.User;
-import com.project.ZTI.security.Utility;
+import com.project.ZTI.security.AuthUtility;
 import com.project.ZTI.service.UserService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +28,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/api")
 public class UserController {
     private final UserService userService;
+    private final AuthUtility authUtility;
 
-    public UserController(UserService userService){
+    public UserController(UserService userService, AuthUtility authUtility){
         this.userService = userService;
+        this.authUtility = authUtility;
     }
 
     @GetMapping("/users")
@@ -63,12 +65,12 @@ public class UserController {
             try{
                 String refreshToken = authorizationHeader.substring("Bearer ".length());
                 //verify token
-                JWTVerifier verifier = JWT.require(Utility.getAlgorithm()).build();
+                JWTVerifier verifier = JWT.require(authUtility.getAlgorithm()).build();
                 DecodedJWT decodedJWT = verifier.verify(refreshToken);
                 String username = decodedJWT.getSubject();
                 User user = userService.getUser(username);
                 //generate new access token
-                String accessToken = Utility.generateAccessToken(request, user);
+                String accessToken = authUtility.generateAccessToken(request, user);
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("access_token", accessToken);
                 tokens.put("refresh_token", refreshToken);

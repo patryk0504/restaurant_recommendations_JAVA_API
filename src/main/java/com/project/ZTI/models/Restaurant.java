@@ -1,16 +1,22 @@
 package com.project.ZTI.models;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.Collection;
 import java.util.Set;
 
 @Node
 @Getter
+@Setter
+@NoArgsConstructor
 public class Restaurant {
 
     @Id @GeneratedValue private long id;
@@ -27,9 +33,15 @@ public class Restaurant {
 
 
 
-    @Relationship(type = "SERVES")
+    @Relationship(type = "SERVES", direction = Relationship.Direction.OUTGOING)
     private Set<Cuisine> cuisines;
 
-    @Relationship(type = "LOCATED_IN")
+    @Relationship(type = "LOCATED_IN", direction = Relationship.Direction.OUTGOING)
     private Location location;
+
+    @Relationship(type = "RATED", direction = Relationship.Direction.INCOMING)
+    private Collection<Rates> rates;
+
+
+
 }

@@ -26,8 +26,9 @@ public class DataLoader implements ApplicationRunner {
         try{
 //            userService.saveRole(new Role(ERole.ROLE_ADMIN));
 //            userService.saveRole(new Role(ERole.ROLE_USER));
-            userService.saveUser(new User("javaUser", "javaUser", "javaUser"));
-            userService.addRoleToUser("javaUser", ERole.ROLE_ADMIN);
+//            userService.saveUser(new User("javaUser", "javaUser", "javaUser"));
+//            userService.addRoleToUser("javaUser", ERole.ROLE_ADMIN);
+            userService.addRoleToUser("javaUser", ERole.ROLE_USER);
         }catch(org.springframework.dao.DataIntegrityViolationException e){
             log.error(e.toString());
         }

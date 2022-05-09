@@ -3,6 +3,8 @@ package com.project.ZTI.models.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.ZTI.models.Rates;
+import com.project.ZTI.models.Restaurant;
 import lombok.*;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -42,6 +44,7 @@ public class User {
     private Collection<Role> roles = new ArrayList<>();
 
 
-
+//    @Relationship(type = "RATED", direction = Relationship.Direction.OUTGOING)
+//    private Collection<Rates> rates = new ArrayList<>();
 
 }
