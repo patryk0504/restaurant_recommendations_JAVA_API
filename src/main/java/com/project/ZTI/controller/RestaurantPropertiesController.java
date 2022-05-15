@@ -1,7 +1,7 @@
 package com.project.ZTI.controller;
 
-import com.project.ZTI.models.Cuisine;
-import com.project.ZTI.models.Location;
+import com.project.ZTI.model.Cuisine;
+import com.project.ZTI.model.Location;
 import com.project.ZTI.service.RestaurantPropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

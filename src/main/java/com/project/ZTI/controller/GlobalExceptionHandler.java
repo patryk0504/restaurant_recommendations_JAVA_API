@@ -1,8 +1,7 @@
 package com.project.ZTI.controller;
 
-import com.project.ZTI.exception.RateNotFoundException;
-import com.project.ZTI.exception.RestaurantNotFoundException;
-import com.project.ZTI.models.ApiError;
+import com.project.ZTI.exception.NotFoundException;
+import com.project.ZTI.model.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,8 +20,9 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({
-            RestaurantNotFoundException.class,
-            RateNotFoundException.class
+//            RestaurantNotFoundException.class,
+//            RateNotFoundException.class
+            NotFoundException.class
     })
     @Nullable
     public final ResponseEntity<ApiError> handleException(Exception ex, WebRequest request) {
@@ -30,14 +30,10 @@ public class GlobalExceptionHandler {
 
         log.error("Handling " + ex.getClass().getSimpleName() + " due to " + ex.getMessage());
 
-        if (ex instanceof RestaurantNotFoundException) {
+        if (ex instanceof NotFoundException) {
             HttpStatus status = HttpStatus.NOT_FOUND;
-            RestaurantNotFoundException restaurantNotFoundException = (RestaurantNotFoundException) ex;
-            return handleRestaurantNotFoundException(restaurantNotFoundException, headers, status, request);
-        } else if (ex instanceof RateNotFoundException) {
-            HttpStatus status = HttpStatus.NOT_FOUND;
-            RateNotFoundException rateNotFoundException = (RateNotFoundException) ex;
-            return handleRateNotFoundException(rateNotFoundException, headers, status, request);
+            NotFoundException notFoundException = (NotFoundException) ex;
+            return handleNotFoundException(notFoundException, headers, status, request);
         } else {
             log.warn("Unknown exception type: " + ex.getClass().getName());
 
@@ -46,19 +42,19 @@ public class GlobalExceptionHandler {
         }
     }
 
-    protected ResponseEntity<ApiError> handleRestaurantNotFoundException(RestaurantNotFoundException ex,
+    protected ResponseEntity<ApiError> handleNotFoundException(NotFoundException ex,
                                                                          HttpHeaders headers, HttpStatus status,
                                                                          WebRequest request) {
         List<String> errors = Collections.singletonList(ex.getMessage());
         return handleExceptionInternal(ex, new ApiError(errors), headers, status, request);
     }
 
-    protected ResponseEntity<ApiError> handleRateNotFoundException(RateNotFoundException ex,
-                                                                   HttpHeaders headers, HttpStatus status,
-                                                                   WebRequest request) {
-        List<String> errors = Collections.singletonList(ex.getMessage());
-        return handleExceptionInternal(ex, new ApiError(errors), headers, status, request);
-    }
+//    protected ResponseEntity<ApiError> handleRateNotFoundException(RateNotFoundException ex,
+//                                                                   HttpHeaders headers, HttpStatus status,
+//                                                                   WebRequest request) {
+//        List<String> errors = Collections.singletonList(ex.getMessage());
+//        return handleExceptionInternal(ex, new ApiError(errors), headers, status, request);
+//    }
 
 
     protected ResponseEntity<ApiError> handleExceptionInternal(Exception ex, @Nullable ApiError body,

@@ -1,8 +1,8 @@
 package com.project.ZTI.controller;
 
-import com.project.ZTI.models.RecommendationsByRestaurantHelper;
-import com.project.ZTI.models.RecommendationsByUserHelper;
-import com.project.ZTI.models.Restaurant;
+import com.project.ZTI.response.RecommendationsByRestaurantResponse;
+import com.project.ZTI.response.RecommendationsByUserResponse;
+import com.project.ZTI.model.Restaurant;
 import com.project.ZTI.service.RestaurantRecommendationsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +26,19 @@ public class RestaurantRecommendationsController {
     }
 
     @GetMapping(path = {"/restaurant/{restaurantId}/recommendations/city"})
-    public ResponseEntity<List<RecommendationsByRestaurantHelper>>
+    public ResponseEntity<List<RecommendationsByRestaurantResponse>>
     getRestaurantRecommendationsByCity(@PathVariable(name = "restaurantId") Long restaurantId) {
         return new ResponseEntity<>(restaurantRecommendationsService.getRestaurantRecommendationsByCity(restaurantId), HttpStatus.OK);
     }
 
     @GetMapping(path = {"/restaurant/{restaurantId}/recommendations/country"})
-    public ResponseEntity<List<RecommendationsByRestaurantHelper>>
+    public ResponseEntity<List<RecommendationsByRestaurantResponse>>
     getRestaurantRecommendationsAllCities(@PathVariable(name = "restaurantId") Long restaurantId) {
         return new ResponseEntity<>(restaurantRecommendationsService.getRestaurantRecommendationsAllCities(restaurantId), HttpStatus.OK);
     }
 
     @GetMapping(path = {"/restaurant/recommendations/user"})
-    public ResponseEntity<List<RecommendationsByUserHelper>>
+    public ResponseEntity<List<RecommendationsByUserResponse>>
     getRestaurantRecommendationsByUser(HttpServletRequest request) {
         return new ResponseEntity<>(restaurantRecommendationsService.getRestaurantRecommendationsByUser(request), HttpStatus.OK);
     }

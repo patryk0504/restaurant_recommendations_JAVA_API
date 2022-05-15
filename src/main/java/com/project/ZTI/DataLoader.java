@@ -1,8 +1,6 @@
 package com.project.ZTI;
 
-import com.project.ZTI.models.user.ERole;
-import com.project.ZTI.models.user.Role;
-import com.project.ZTI.models.user.User;
+import com.project.ZTI.model.user.ERole;
 import com.project.ZTI.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

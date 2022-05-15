@@ -1,8 +1,8 @@
 package com.project.ZTI.service;
 
-import com.project.ZTI.models.user.ERole;
-import com.project.ZTI.models.user.Role;
-import com.project.ZTI.models.user.User;
+import com.project.ZTI.model.user.ERole;
+import com.project.ZTI.model.user.Role;
+import com.project.ZTI.model.user.User;
 import com.project.ZTI.repository.RoleRepository;
 import com.project.ZTI.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;

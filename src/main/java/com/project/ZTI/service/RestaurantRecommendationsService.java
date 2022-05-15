@@ -1,15 +1,14 @@
 package com.project.ZTI.service;
 
-import com.project.ZTI.models.RecommendationsByRestaurantHelper;
-import com.project.ZTI.models.RecommendationsByUserHelper;
-import com.project.ZTI.models.Restaurant;
-import com.project.ZTI.models.user.User;
+import com.project.ZTI.response.RecommendationsByRestaurantResponse;
+import com.project.ZTI.response.RecommendationsByUserResponse;
+import com.project.ZTI.model.Restaurant;
+import com.project.ZTI.model.user.User;
 import com.project.ZTI.repository.RecommendationsByRestaurantProjection;
 import com.project.ZTI.repository.RecommendationsByUserProjection;
 import com.project.ZTI.repository.RestaurantRepository;
 import com.project.ZTI.security.AuthUtility;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -28,9 +27,9 @@ public class RestaurantRecommendationsService {
         this.authUtility = authUtility;
     }
 
-    public List<RecommendationsByRestaurantHelper>
+    public List<RecommendationsByRestaurantResponse>
     getRestaurantRecommendationsByCity(Long restaurantId) {
-        List<RecommendationsByRestaurantHelper> restaurantRecommendationsResult = new ArrayList<>();
+        List<RecommendationsByRestaurantResponse> restaurantRecommendationsResult = new ArrayList<>();
         List<RecommendationsByRestaurantProjection> recommendationsByRestaurantProjections
                 = restaurantRepository.findRestaurantRecommendationsByCity(restaurantId);
         List<Long> recommendedRestaurantsIds = recommendationsByRestaurantProjections.stream()
@@ -38,7 +37,7 @@ public class RestaurantRecommendationsService {
                 .collect(Collectors.toList());
         List<Restaurant> recommendedRestaurantsStandardObjects = restaurantRepository.findRestaurantByIdIn(recommendedRestaurantsIds);
         for (int i = 0; i < recommendationsByRestaurantProjections.size(); i++) {
-            restaurantRecommendationsResult.add(new RecommendationsByRestaurantHelper(
+            restaurantRecommendationsResult.add(new RecommendationsByRestaurantResponse(
                     recommendedRestaurantsStandardObjects.get(i),
                     recommendationsByRestaurantProjections.get(i).getJaccard(),
                     recommendationsByRestaurantProjections.get(i).getParams()
@@ -47,9 +46,9 @@ public class RestaurantRecommendationsService {
         return restaurantRecommendationsResult;
     }
 
-    public List<RecommendationsByRestaurantHelper>
+    public List<RecommendationsByRestaurantResponse>
     getRestaurantRecommendationsAllCities(Long restaurantId) {
-        List<RecommendationsByRestaurantHelper> restaurantRecommendationsResult = new ArrayList<>();
+        List<RecommendationsByRestaurantResponse> restaurantRecommendationsResult = new ArrayList<>();
         List<RecommendationsByRestaurantProjection> recommendationsByRestaurantProjections
                 = restaurantRepository.findRestaurantRecommendationsAllCities(restaurantId);
         List<Long> recommendedRestaurantsIds = recommendationsByRestaurantProjections
@@ -59,7 +58,7 @@ public class RestaurantRecommendationsService {
         List<Restaurant> recommendedRestaurantsStandardObjects = restaurantRepository.findRestaurantByIdIn(recommendedRestaurantsIds);
         for (int i = 0; i < recommendationsByRestaurantProjections.size(); i++) {
             restaurantRecommendationsResult.add(
-                    new RecommendationsByRestaurantHelper(
+                    new RecommendationsByRestaurantResponse(
                             recommendedRestaurantsStandardObjects.get(i),
                             recommendationsByRestaurantProjections.get(i).getJaccard(),
                             recommendationsByRestaurantProjections.get(i).getParams()
@@ -68,13 +67,13 @@ public class RestaurantRecommendationsService {
         return restaurantRecommendationsResult;
     }
 
-    public List<RecommendationsByUserHelper>
+    public List<RecommendationsByUserResponse>
     getRestaurantRecommendationsByUser(HttpServletRequest request){
         User user = authUtility.getUserFromAccessToken(request);
         if (user == null)
             throw new RuntimeException("User not found");
 
-        List<RecommendationsByUserHelper> restaurantRecommendationsResult = new ArrayList<>();
+        List<RecommendationsByUserResponse> restaurantRecommendationsResult = new ArrayList<>();
         List<RecommendationsByUserProjection> recommendationsByUserProjections
                 = restaurantRepository.findRestaurantRecommendationsByUserId(user.getId());
         List<Long> recommendedRestaurantsIds = recommendationsByUserProjections
@@ -85,7 +84,7 @@ public class RestaurantRecommendationsService {
                 restaurantRepository.findRestaurantByIdIn(recommendedRestaurantsIds);
         for (int i = 0; i < recommendationsByUserProjections.size(); i++) {
             restaurantRecommendationsResult.add(
-                    new RecommendationsByUserHelper(
+                    new RecommendationsByUserResponse(
                             recommendedRestaurantsStandardObjects.get(i),
                             recommendationsByUserProjections.get(i).getOtherUsers(),
                             recommendationsByUserProjections.get(i).getAvgRating()

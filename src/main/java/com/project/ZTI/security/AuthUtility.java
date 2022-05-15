@@ -4,25 +4,17 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.ZTI.models.user.Role;
 import com.project.ZTI.service.UserService;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @Component
@@ -48,7 +40,7 @@ public class AuthUtility {
                 .sign(getAlgorithm());
     }
 
-    public String generateAccessToken(HttpServletRequest request, com.project.ZTI.models.user.User user){
+    public String generateAccessToken(HttpServletRequest request, com.project.ZTI.model.user.User user){
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 50*60*1000))
@@ -65,7 +57,7 @@ public class AuthUtility {
                 .sign(getAlgorithm());
     }
 
-    public com.project.ZTI.models.user.User getUserFromAccessToken(HttpServletRequest request){
+    public com.project.ZTI.model.user.User getUserFromAccessToken(HttpServletRequest request){
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {

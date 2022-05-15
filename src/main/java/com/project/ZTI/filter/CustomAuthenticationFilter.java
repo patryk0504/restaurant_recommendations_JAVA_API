@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ZTI.security.AuthUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,7 +44,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                                 HttpServletResponse response) throws AuthenticationException {
         ObjectMapper objectMapper = new ObjectMapper();
         try{
-            com.project.ZTI.models.user.User user = objectMapper.readValue(request.getInputStream(), com.project.ZTI.models.user.User.class);
+            com.project.ZTI.model.user.User user = objectMapper.readValue(request.getInputStream(), com.project.ZTI.model.user.User.class);
             String username = user.getUsername();
             String password = user.getPassword();
             log.info("Username {} tries to login", username);

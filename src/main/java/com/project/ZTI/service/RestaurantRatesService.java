@@ -1,40 +1,34 @@
 package com.project.ZTI.service;
 
+import com.project.ZTI.exception.CommentNotFoundException;
 import com.project.ZTI.exception.RateNotFoundException;
 import com.project.ZTI.exception.RestaurantNotFoundException;
-import com.project.ZTI.models.Rates;
-import com.project.ZTI.models.Restaurant;
-import com.project.ZTI.models.user.User;
+import com.project.ZTI.model.Rates;
+import com.project.ZTI.model.Restaurant;
+import com.project.ZTI.model.user.User;
 import com.project.ZTI.repository.RestaurantRepository;
+import com.project.ZTI.response.RestaurantRateByUsersResponse;
 import com.project.ZTI.security.AuthUtility;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
 public class RestaurantRatesService {
     private final RestaurantRepository restaurantRepository;
     private final AuthUtility authUtility;
 
-    public RestaurantRatesService(RestaurantRepository restaurantRepository, AuthUtility authUtility){
+    public RestaurantRatesService(RestaurantRepository restaurantRepository, AuthUtility authUtility) {
         this.restaurantRepository = restaurantRepository;
         this.authUtility = authUtility;
     }
 
-    public Map<String, Integer> getRestaurantRate(Long restaurantId, HttpServletRequest request) throws IOException {
+    public Map<String, Integer> getRestaurantRate(Long restaurantId, HttpServletRequest request) {
         User user = authUtility.getUserFromAccessToken(request);
         if (user != null) {
             Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId)
@@ -49,10 +43,9 @@ public class RestaurantRatesService {
             throw new RuntimeException("User not found");
     }
 
-    @PutMapping("/restaurant/{restaurantId}/rate/{rate}")
     public Restaurant rateRestaurant(Long restaurantId, int rate, HttpServletRequest request) {
         User user = authUtility.getUserFromAccessToken(request);
-        if(user == null){
+        if (user == null) {
             throw new RuntimeException("User not found");
         }
         Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId)
@@ -63,12 +56,71 @@ public class RestaurantRatesService {
                     return r.getUser().getId().equals(user.getId());
                 }).collect(Collectors.toList());
         //create new rate
-        if(userRates.isEmpty()){
+        if (userRates.isEmpty()) {
             Rates newRate = new Rates(user, rate, null);
             restaurant.getRates().add(newRate);
             //only change rate value
-        }else{
+        } else {
             userRates.get(0).setRating(rate);
+        }
+        return restaurantRepository.save(restaurant);
+    }
+
+    public Map<String, String> getRestaurantComment(Long restaurantId, HttpServletRequest request) {
+        User user = authUtility.getUserFromAccessToken(request);
+        if (user != null) {
+            Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId)
+                    .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
+            var tmp = restaurant.getRates().stream().filter(rates -> {
+                return rates.getUser().getId().equals(user.getId());
+            }).findFirst();
+            Map<String, String> result = new HashMap<>();
+            result.put("comment", tmp.orElseThrow(CommentNotFoundException::new).getComment());
+            return result;
+        } else
+            throw new RuntimeException("User not found");
+    }
+
+    public List<RestaurantRateByUsersResponse> getAllRestaurantRates(Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId)
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
+        var rates = restaurant.getRates();
+        List<RestaurantRateByUsersResponse> restaurantRateByUsersResponsesList = new ArrayList<>();
+        rates.forEach(
+                (rate) -> {
+                    restaurantRateByUsersResponsesList.add(
+                            new RestaurantRateByUsersResponse(
+                                    rate.getUser().getUsername(),
+                                    rate.getComment(),
+                                    rate.getRating()
+                            )
+                    );
+                }
+        );
+        if(restaurantRateByUsersResponsesList.isEmpty())
+            throw new CommentNotFoundException();
+        return restaurantRateByUsersResponsesList;
+    }
+
+    public Restaurant commentRestaurant(Long restaurantId, String comment, HttpServletRequest request) {
+        User user = authUtility.getUserFromAccessToken(request);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId)
+                .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
+        //to avoid duplicated relationship, first check if user has rate already
+        List<Rates> userRates = restaurant.getRates().stream()
+                .filter((r) -> {
+                    return r.getUser().getId().equals(user.getId());
+                }).collect(Collectors.toList());
+        //create new rate
+        if (userRates.isEmpty()) {
+            Rates newRate = new Rates(user, 0, comment);
+            restaurant.getRates().add(newRate);
+            //only change rate value
+        } else {
+            userRates.get(0).setComment(comment);
         }
         return restaurantRepository.save(restaurant);
     }

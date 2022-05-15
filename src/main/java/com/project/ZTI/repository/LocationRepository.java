@@ -1,6 +1,6 @@
 package com.project.ZTI.repository;
 
-import com.project.ZTI.models.Location;
+import com.project.ZTI.model.Location;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 

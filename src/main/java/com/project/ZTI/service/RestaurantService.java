@@ -1,14 +1,12 @@
 package com.project.ZTI.service;
 
 import com.project.ZTI.exception.RestaurantNotFoundException;
-import com.project.ZTI.models.Restaurant;
+import com.project.ZTI.model.Restaurant;
 import com.project.ZTI.repository.RestaurantRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 

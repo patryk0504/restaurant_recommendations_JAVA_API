@@ -1,6 +1,6 @@
 package com.project.ZTI.repository;
 
-import com.project.ZTI.models.Restaurant;
+import com.project.ZTI.model.Restaurant;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;

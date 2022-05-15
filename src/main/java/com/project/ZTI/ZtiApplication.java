@@ -1,9 +1,5 @@
 package com.project.ZTI;
 
-import com.project.ZTI.models.user.ERole;
-import com.project.ZTI.models.user.Role;
-import com.project.ZTI.service.UserService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

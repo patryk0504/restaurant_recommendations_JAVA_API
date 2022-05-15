@@ -1,4 +1,4 @@
-package com.project.ZTI.models;
+package com.project.ZTI.model;
 
 import java.util.List;
 

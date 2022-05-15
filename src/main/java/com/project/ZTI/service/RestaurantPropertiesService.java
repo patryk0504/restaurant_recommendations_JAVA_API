@@ -1,10 +1,11 @@
 package com.project.ZTI.service;
 
-import com.project.ZTI.models.Cuisine;
-import com.project.ZTI.models.Location;
+import com.project.ZTI.exception.CuisineNotFoundException;
+import com.project.ZTI.exception.LocationNotFoundException;
+import com.project.ZTI.model.Cuisine;
+import com.project.ZTI.model.Location;
 import com.project.ZTI.repository.CuisineRepository;
 import com.project.ZTI.repository.LocationRepository;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,14 @@ public class RestaurantPropertiesService {
     public RestaurantPropertiesService(LocationRepository locationRepository, CuisineRepository cuisineRepository){
         this.locationRepository = locationRepository;
         this.cuisineRepository = cuisineRepository;
+    }
+
+    public Location getLocationById(Long locationId){
+        return locationRepository.findById(locationId).orElseThrow(() -> new LocationNotFoundException(locationId));
+    }
+
+    public Cuisine getCuisineById(Long cuisineId){
+        return cuisineRepository.findById(cuisineId).orElseThrow(() -> new CuisineNotFoundException(cuisineId));
     }
 
     public List<Location> getAllLocations(){

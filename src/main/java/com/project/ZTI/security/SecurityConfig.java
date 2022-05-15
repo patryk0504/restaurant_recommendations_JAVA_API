@@ -2,10 +2,7 @@ package com.project.ZTI.security;
 
 import com.project.ZTI.filter.CustomAuthenticationFilter;
 import com.project.ZTI.filter.CustomAuthorizationFilter;
-import com.project.ZTI.models.user.ERole;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.project.ZTI.model.user.ERole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
