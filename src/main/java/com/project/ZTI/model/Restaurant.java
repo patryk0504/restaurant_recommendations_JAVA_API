@@ -29,6 +29,7 @@ public class Restaurant {
     private boolean gluten_free;
     private String popularity_detailed;
     private String popularity_generic;
+    private String trip_advisor_id;
 
 
 

@@ -19,11 +19,7 @@ import java.util.List;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({
-//            RestaurantNotFoundException.class,
-//            RateNotFoundException.class
-            NotFoundException.class
-    })
+    @ExceptionHandler({NotFoundException.class})
     @Nullable
     public final ResponseEntity<ApiError> handleException(Exception ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
@@ -48,13 +44,6 @@ public class GlobalExceptionHandler {
         List<String> errors = Collections.singletonList(ex.getMessage());
         return handleExceptionInternal(ex, new ApiError(errors), headers, status, request);
     }
-
-//    protected ResponseEntity<ApiError> handleRateNotFoundException(RateNotFoundException ex,
-//                                                                   HttpHeaders headers, HttpStatus status,
-//                                                                   WebRequest request) {
-//        List<String> errors = Collections.singletonList(ex.getMessage());
-//        return handleExceptionInternal(ex, new ApiError(errors), headers, status, request);
-//    }
 
 
     protected ResponseEntity<ApiError> handleExceptionInternal(Exception ex, @Nullable ApiError body,

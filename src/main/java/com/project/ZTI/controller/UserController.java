@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ZTI.model.user.ERole;
 import com.project.ZTI.model.user.Role;
 import com.project.ZTI.model.user.User;
+import com.project.ZTI.request.LoginRequest;
 import com.project.ZTI.security.AuthUtility;
 import com.project.ZTI.service.UserService;
 import lombok.Data;
@@ -45,6 +46,11 @@ public class UserController {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+//
+//    }
 
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role){

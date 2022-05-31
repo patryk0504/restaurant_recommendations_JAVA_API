@@ -3,9 +3,11 @@ package com.project.ZTI.security;
 import com.project.ZTI.filter.CustomAuthenticationFilter;
 import com.project.ZTI.filter.CustomAuthorizationFilter;
 import com.project.ZTI.model.user.ERole;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,6 +30,20 @@ import static org.springframework.http.HttpMethod.*;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/api-docs/**",
+            "/swagger-ui/**"
+            // other public endpoints of your API may be appended to this array
+    };
 //    we must create these beans in our app
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -37,7 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(com.project.ZTI.service.UserServiceImplementation userDetailsService,
                           PasswordEncoder passwordEncoder,
                           @Lazy CustomAuthorizationFilter customAuthorizationFilter,
-                          @Lazy CustomAuthenticationFilter customAuthenticationFilter){
+                          @Lazy CustomAuthenticationFilter customAuthenticationFilter
+    ){
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.customAuthorizationFilter = customAuthorizationFilter;
@@ -48,22 +65,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+
     }
-
-
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and();
-
-//        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilter(customAuthenticationFilter);
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         //user routes
-        http.authorizeRequests().antMatchers("/api/login/**","/api/user/save/**", "/api/token/refresh/**").permitAll();
+        http.authorizeRequests().antMatchers("/login/**","/api/user/save/**", "/api/token/refresh/**").permitAll();
+
+//        http.authorizeRequests().antMatchers("/api/login/**","/api/user/save/**", "/api/token/refresh/**").permitAll();
+        http.authorizeRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll();
+
         http.authorizeRequests().antMatchers(GET, "/api/users").hasAnyAuthority(ERole.ROLE_ADMIN.name());
         http.authorizeRequests().antMatchers(POST, "/api/role").hasAnyAuthority(ERole.ROLE_ADMIN.name());
         http.authorizeRequests().antMatchers(PUT, "/api/role/assign").hasAnyAuthority(ERole.ROLE_ADMIN.name());
@@ -76,8 +97,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/api/restaurants/recommendations/**").hasAuthority(ERole.ROLE_USER.name());
         http.authorizeRequests().antMatchers(PUT,"/api/restaurant/**");
         http.authorizeRequests().anyRequest().authenticated();
-        http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilter(customAuthenticationFilter);
+//        http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
