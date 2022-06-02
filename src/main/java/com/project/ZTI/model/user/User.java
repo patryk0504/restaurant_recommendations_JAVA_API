@@ -2,6 +2,7 @@ package com.project.ZTI.model.user;
 
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
@@ -21,6 +22,7 @@ public class User {
     private Long id;
     private String name;
     private String username;
+    @JsonIgnore
     private String password;
 
     public User(String name, String username, String password){
@@ -33,6 +35,14 @@ public class User {
     @JsonCreator
     public User(@JsonProperty("username") String username, @JsonProperty("password")String password) {
         this.username = username;
+        this.password = password;
+    }
+
+    @JsonIgnore
+    public String getPassword(){return password;}
+
+    @JsonProperty
+    public void setPassword(final String password) {
         this.password = password;
     }
 

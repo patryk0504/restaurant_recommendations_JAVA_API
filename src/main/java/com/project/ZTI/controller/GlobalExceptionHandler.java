@@ -1,6 +1,7 @@
 package com.project.ZTI.controller;
 
 import com.project.ZTI.exception.NotFoundException;
+import com.project.ZTI.exception.UserAlreadyExistException;
 import com.project.ZTI.model.ApiError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -30,9 +31,12 @@ public class GlobalExceptionHandler {
             HttpStatus status = HttpStatus.NOT_FOUND;
             NotFoundException notFoundException = (NotFoundException) ex;
             return handleNotFoundException(notFoundException, headers, status, request);
-        } else {
+        }else if(ex instanceof UserAlreadyExistException){
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            UserAlreadyExistException userAlreadyExistException = (UserAlreadyExistException) ex;
+            return handleUserAlreadyExistException(userAlreadyExistException, headers, status, request);
+        }else {
             log.warn("Unknown exception type: " + ex.getClass().getName());
-
             HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
             return handleExceptionInternal(ex, null, headers, status, request);
         }
@@ -45,6 +49,12 @@ public class GlobalExceptionHandler {
         return handleExceptionInternal(ex, new ApiError(errors), headers, status, request);
     }
 
+    protected ResponseEntity<ApiError> handleUserAlreadyExistException(UserAlreadyExistException ex,
+                                                               HttpHeaders headers, HttpStatus status,
+                                                               WebRequest request) {
+        List<String> errors = Collections.singletonList(ex.getMessage());
+        return handleExceptionInternal(ex, new ApiError(errors), headers, status, request);
+    }
 
     protected ResponseEntity<ApiError> handleExceptionInternal(Exception ex, @Nullable ApiError body,
                                                                HttpHeaders headers, HttpStatus status,

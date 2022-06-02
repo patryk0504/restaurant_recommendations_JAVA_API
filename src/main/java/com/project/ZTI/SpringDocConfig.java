@@ -26,9 +26,9 @@ public class SpringDocConfig {
     @Bean
     public OpenAPI myOpenAPI() {
         final String securitySchemeName = "bearerAuth";
-        return new OpenAPI().info(new Info().title("My MWE API")
-                .description("This document specifies the API")
-                .version("v23"))
+        return new OpenAPI().info(new Info().title("Restaurant Recommendations API")
+                .description("Important! To authorize endpoints call /api/login endpoint, copy Auth Token and paste it to Authorize option.")
+                .version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components().addSecuritySchemes(securitySchemeName,
                         new SecurityScheme()
@@ -36,23 +36,4 @@ public class SpringDocConfig {
                                 .scheme("bearer")
                                 .bearerFormat("JWT")));
     }
-
-//    @Bean
-//    public OpenApiCustomiser customerGlobalHeaderOpenApiCustomiser() {
-//        JsonSchema jsonSchema = new JsonSchema();
-//        RequestBody requestBody = new RequestBody();
-////        requestBody.setContent();
-//        requestBody.addExtension("username", new RequestBody().description("username")
-//                .content(new Content().addMediaType("application/json", new MediaType().schema(jsonSchema))));
-////        requestBody.addExtension("username","username");
-//        return openApi -> openApi.path("/api/login",
-//                new PathItem().post(new Operation()
-//                        .operationId("login")
-//                        .requestBody(requestBody)
-//                        .responses(new ApiResponses()
-//                            .addApiResponse("200", new ApiResponse().description("OK")
-//                                .content(new Content().addMediaType("*/*", new MediaType())))
-//                        )));
-//    }
-
 }

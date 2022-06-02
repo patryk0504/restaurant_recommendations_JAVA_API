@@ -1,6 +1,7 @@
 package com.project.ZTI.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.ZTI.response.AuthTokensResponse;
 import com.project.ZTI.security.AuthUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,9 +74,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String accessToken = authUtility.generateAccessToken(request, user);
         String refreshToken = authUtility.generateRefreshToken(request, user);
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", accessToken);
-        tokens.put("refresh_token", refreshToken);
+        AuthTokensResponse tokens = new AuthTokensResponse();
+        tokens.setAccess_token(accessToken);
+        tokens.setRefresh_token(refreshToken);
+        tokens.setRoles(user.getAuthorities());
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }

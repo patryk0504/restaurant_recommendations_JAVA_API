@@ -1,11 +1,14 @@
 package com.project.ZTI.service;
 
+import com.project.ZTI.exception.UserAlreadyExistException;
 import com.project.ZTI.model.user.ERole;
 import com.project.ZTI.model.user.Role;
 import com.project.ZTI.model.user.User;
 import com.project.ZTI.repository.RoleRepository;
 import com.project.ZTI.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 @Service
 @Transactional
@@ -52,11 +56,16 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 
     @Override
     public User saveUser(User user) {
-        log.info("Saving new user {} to the database", user.getName());
+        log.info("Saving new user {} to the database", user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role role = roleRepository.findByRole(ERole.ROLE_USER);
         user.getRoles().add(role);
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        }catch(DataIntegrityViolationException e){
+            log.error("User with given parameters already exist!");
+            throw new UserAlreadyExistException();
+        }
     }
 
     @Override
