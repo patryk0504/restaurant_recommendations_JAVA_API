@@ -1,5 +1,6 @@
 package com.project.ZTI.service;
 
+import com.project.ZTI.exception.UserNotFoundException;
 import com.project.ZTI.response.RecommendationsByRestaurantResponse;
 import com.project.ZTI.response.RecommendationsByUserResponse;
 import com.project.ZTI.model.Restaurant;
@@ -71,7 +72,7 @@ public class RestaurantRecommendationsService {
     getRestaurantRecommendationsByUser(HttpServletRequest request){
         User user = authUtility.getUserFromAccessToken(request);
         if (user == null)
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
 
         List<RecommendationsByUserResponse> restaurantRecommendationsResult = new ArrayList<>();
         List<RecommendationsByUserProjection> recommendationsByUserProjections
@@ -98,6 +99,6 @@ public class RestaurantRecommendationsService {
         if (user != null)
             return restaurantRepository.findRestaurantRecommendationsByRating(user.getId());
         else
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
     }
 }

@@ -1,5 +1,6 @@
 package com.project.ZTI.service;
 
+import com.project.ZTI.exception.UserNotFoundException;
 import com.project.ZTI.model.user.User;
 import com.project.ZTI.repository.UserRepository;
 import com.project.ZTI.repository.UsersWithParametersProjection;
@@ -25,6 +26,6 @@ public class UserRecommendationService {
         if (user != null)
             return userRepository.findUserWithParameters(user.getId());
         else
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
     }
 }

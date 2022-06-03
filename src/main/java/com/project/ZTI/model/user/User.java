@@ -48,9 +48,4 @@ public class User {
 
     @Relationship(type = "HAS_ROLE", direction = Relationship.Direction.OUTGOING)
     private Collection<Role> roles = new ArrayList<>();
-
-
-//    @Relationship(type = "RATED", direction = Relationship.Direction.OUTGOING)
-//    private Collection<Rates> rates = new ArrayList<>();
-
 }

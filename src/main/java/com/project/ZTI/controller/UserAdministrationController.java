@@ -7,10 +7,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.ZTI.model.user.ERole;
 import com.project.ZTI.model.user.Role;
 import com.project.ZTI.model.user.User;
+import com.project.ZTI.repository.RoleRepository;
 import com.project.ZTI.request.LoginRequest;
+import com.project.ZTI.request.RoleToUserRequest;
 import com.project.ZTI.security.AuthUtility;
+import com.project.ZTI.service.UserAdministrationService;
 import com.project.ZTI.service.UserService;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,37 +31,36 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
+@Slf4j
 public class UserAdministrationController {
-    private final UserService userService;
-    private final AuthUtility authUtility;
+    private final UserAdministrationService userAdministrationService;
 
-    public UserAdministrationController(UserService userService, AuthUtility authUtility){
-        this.userService = userService;
-        this.authUtility = authUtility;
+    public UserAdministrationController(UserAdministrationService userAdministrationService) {
+        this.userAdministrationService = userAdministrationService;
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers(){
-        return ResponseEntity.ok().body(userService.getUsers());
+    public ResponseEntity<List<User>> getUsers() {
+        return ResponseEntity.ok().body(userAdministrationService.getUsers());
     }
 
 
     @PostMapping("/role/save")
-    public ResponseEntity<Role> saveRole(@RequestBody Role role){
+    public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveRole(role));
+        return ResponseEntity.created(uri).body(userAdministrationService.saveRole(role));
     }
 
     @PutMapping("/role/assign")
-    public ResponseEntity<?> addRole(@RequestBody RoleToUserForm roleToUserForm){
-        userService.addRoleToUser(roleToUserForm.getUsername(), roleToUserForm.getRole());
+    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserRequest roleToUserRequest) {
+        userAdministrationService.addRoleToUser(roleToUserRequest.getUsername(), roleToUserRequest.getRole());
         return ResponseEntity.noContent().build();
     }
-}
 
-@Data
-class RoleToUserForm{
-    private String username;
-    private ERole role;
+    @PutMapping("/role/cancel")
+    public ResponseEntity<?> cancelRoleFromUser(@RequestBody Map<String,String> username, HttpServletRequest request) {
+        userAdministrationService.cancelRoleFromUser(username.get("username"), request);
+        return ResponseEntity.noContent().build();
+    }
 }

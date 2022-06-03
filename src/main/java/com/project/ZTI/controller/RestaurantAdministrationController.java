@@ -4,6 +4,7 @@ import com.project.ZTI.model.Cuisine;
 import com.project.ZTI.model.Restaurant;
 import com.project.ZTI.repository.RestaurantRepository;
 import com.project.ZTI.request.AddRestaurantRequest;
+import com.project.ZTI.service.RestaurantAdministrationService;
 import com.project.ZTI.service.RestaurantPropertiesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,16 +18,19 @@ import java.util.Set;
 
 @CrossOrigin(origins = {"http://localhost:7777", "http://localhost:3000"})
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 @Slf4j
 public class RestaurantAdministrationController {
     private final RestaurantRepository restaurantRepository;
     private final RestaurantPropertiesService restaurantPropertiesService;
+    private final RestaurantAdministrationService restaurantAdministrationService;
 
     public RestaurantAdministrationController(RestaurantRepository restaurantRepository,
-                                              RestaurantPropertiesService restaurantPropertiesService){
+                                              RestaurantPropertiesService restaurantPropertiesService,
+                                              RestaurantAdministrationService restaurantAdministrationService){
         this.restaurantRepository = restaurantRepository;
         this.restaurantPropertiesService =restaurantPropertiesService;
+        this.restaurantAdministrationService = restaurantAdministrationService;
     }
 
     @PostMapping("/restaurant")
@@ -47,5 +51,11 @@ public class RestaurantAdministrationController {
         newRestaurant.setCuisines(cuisineSet);
 
         return new ResponseEntity<>(restaurantRepository.save(newRestaurant), HttpStatus.OK);
+    }
+
+    @DeleteMapping("restaurant/{restaurantId}")
+    public ResponseEntity<?> deleteRestaurant(@PathVariable Long restaurantId){
+        restaurantAdministrationService.deleteRestaurant(restaurantId);
+        return ResponseEntity.noContent().build();
     }
 }

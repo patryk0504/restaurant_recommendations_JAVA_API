@@ -3,6 +3,7 @@ package com.project.ZTI.service;
 import com.project.ZTI.exception.CommentNotFoundException;
 import com.project.ZTI.exception.RateNotFoundException;
 import com.project.ZTI.exception.RestaurantNotFoundException;
+import com.project.ZTI.exception.UserNotFoundException;
 import com.project.ZTI.model.Rates;
 import com.project.ZTI.model.Restaurant;
 import com.project.ZTI.model.user.User;
@@ -40,13 +41,13 @@ public class RestaurantRatesService {
             result.put("rating", tmp.orElseThrow(RateNotFoundException::new).getRating());
             return result;
         } else
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
     }
 
     public Restaurant rateRestaurant(Long restaurantId, int rate, HttpServletRequest request) {
         User user = authUtility.getUserFromAccessToken(request);
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
         }
         Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
@@ -78,7 +79,7 @@ public class RestaurantRatesService {
             result.put("comment", tmp.orElseThrow(CommentNotFoundException::new).getComment());
             return result;
         } else
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
     }
 
     public List<RestaurantRateByUsersResponse> getAllRestaurantRates(Long restaurantId) {
@@ -105,7 +106,7 @@ public class RestaurantRatesService {
     public Restaurant commentRestaurant(Long restaurantId, String comment, HttpServletRequest request) {
         User user = authUtility.getUserFromAccessToken(request);
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException();
         }
         Restaurant restaurant = restaurantRepository.findRestaurantById(restaurantId)
                 .orElseThrow(() -> new RestaurantNotFoundException(restaurantId));
