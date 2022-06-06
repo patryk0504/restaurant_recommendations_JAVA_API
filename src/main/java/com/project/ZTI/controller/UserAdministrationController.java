@@ -13,6 +13,7 @@ import com.project.ZTI.request.RoleToUserRequest;
 import com.project.ZTI.security.AuthUtility;
 import com.project.ZTI.service.UserAdministrationService;
 import com.project.ZTI.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
@@ -40,24 +41,28 @@ public class UserAdministrationController {
         this.userAdministrationService = userAdministrationService;
     }
 
+    @Operation(summary = "Get all users")
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userAdministrationService.getUsers());
     }
 
 
+    @Operation(summary = "Add new role")
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userAdministrationService.saveRole(role));
     }
 
+    @Operation(summary = "Assign role to user")
     @PutMapping("/role/assign")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserRequest roleToUserRequest) {
         userAdministrationService.addRoleToUser(roleToUserRequest.getUsername(), roleToUserRequest.getRole());
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Remove admin role from user")
     @PutMapping("/role/cancel")
     public ResponseEntity<?> cancelRoleFromUser(@RequestBody Map<String,String> username, HttpServletRequest request) {
         userAdministrationService.cancelRoleFromUser(username.get("username"), request);

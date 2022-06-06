@@ -19,10 +19,10 @@ public class RestaurantService {
         this.restaurantRepository =restaurantRepository;
     }
 
-    public List<Restaurant> getAllRestaurants() {
+    public List<Restaurant> getAllRestaurants(Pageable pageable) {
         log.info("Get all restaurants");
-        Pageable firstPageWithFiveElements = PageRequest.of(0, 5);
-        return restaurantRepository.findTopBy(firstPageWithFiveElements);
+//        Pageable firstPageWithFiveElements = PageRequest.of(0, 5);
+        return restaurantRepository.findTopBy(pageable);
     }
 
     public List<Restaurant> getRestaurantByLocation(Long id) {

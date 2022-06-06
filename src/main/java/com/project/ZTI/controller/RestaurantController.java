@@ -6,7 +6,9 @@ import com.project.ZTI.request.AddRestaurantRequest;
 import com.project.ZTI.response.RestaurantRateByUsersResponse;
 import com.project.ZTI.service.RestaurantRatesService;
 import com.project.ZTI.service.RestaurantService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,27 +30,32 @@ public class RestaurantController {
         this.restaurantRatesService = restaurantRatesService;
     }
 
+    @Operation(summary = "Get page of restaurants")
     @GetMapping("/restaurants")
-    public ResponseEntity<List<Restaurant>> getAllRestaurants() {
-        return new ResponseEntity<>(restaurantService.getAllRestaurants(), HttpStatus.OK);
+    public ResponseEntity<List<Restaurant>> getAllRestaurants(Pageable pageable) {
+        return new ResponseEntity<>(restaurantService.getAllRestaurants(pageable), HttpStatus.OK);
     }
 
+    @Operation(summary = "Get restaurants in given location")
     @GetMapping("/restaurants/locations/{id}")
     public ResponseEntity<List<Restaurant>> getRestaurantByLocation(@PathVariable Long id) {
         return new ResponseEntity<>(restaurantService.getRestaurantByLocation(id), HttpStatus.OK);
     }
 
+    @Operation(summary = "Get restaurant details")
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<Restaurant> getRestaurant(@PathVariable(name = "restaurantId") Long restaurantId) {
         return new ResponseEntity<>(restaurantService.getRestaurant(restaurantId), HttpStatus.OK);
     }
 
+    @Operation(summary = "Get restaurant rating")
     @GetMapping("/restaurant/{restaurantId}/rate")
     public ResponseEntity<Map<String, Integer>> getRestaurantRate(@PathVariable(name = "restaurantId") Long restaurantId,
                                                                   HttpServletRequest request) {
         return new ResponseEntity<>(restaurantRatesService.getRestaurantRate(restaurantId, request), HttpStatus.OK);
     }
 
+    @Operation(summary = "Rate restaurant")
     @PutMapping("/restaurant/{restaurantId}/rate/{rate}")
     public ResponseEntity<?> rateRestaurant(@PathVariable(name = "restaurantId") Long restaurantId,
                                             @PathVariable(name = "rate") int rate,
@@ -58,6 +65,7 @@ public class RestaurantController {
     }
 
 
+    @Operation(summary = "Get restaurant comments")
     @GetMapping("/restaurant/{restaurantId}/comment")
     public ResponseEntity<Map<String, String>> getRestaurantComment(@PathVariable(name="restaurantId") Long restaurantId,
                                                                     HttpServletRequest request){
@@ -65,6 +73,7 @@ public class RestaurantController {
 
     }
 
+    @Operation(summary = "Get restaurant rates")
     @GetMapping("/restaurant/{restaurantId}/rates/all")
     public ResponseEntity<List<RestaurantRateByUsersResponse>> getAllRestaurantRates(@PathVariable(name="restaurantId") Long restaurantId,
                                                                                      HttpServletRequest request){
@@ -72,6 +81,7 @@ public class RestaurantController {
 
     }
 
+    @Operation(summary = "Comment restaurant")
     @PutMapping("/restaurant/{restaurantId}/comment")
     public ResponseEntity<?> commentRestaurant(@PathVariable(name = "restaurantId") Long restaurantId,
                                             @RequestBody Map<String, String> comment,

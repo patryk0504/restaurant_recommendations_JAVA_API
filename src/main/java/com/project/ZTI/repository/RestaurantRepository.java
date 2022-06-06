@@ -18,21 +18,6 @@ public interface RestaurantRepository extends Neo4jRepository<Restaurant, Long> 
 
     List<Restaurant> findRestaurantByIdIn(List<Long> id);
 
-    @Query("MATCH (me:User)-[my:RATED]->(r:Restaurant)\n" +
-            "MATCH (other:User)-[their:RATED]->(r)\n" +
-            "WHERE id(me) = $userId\n" +
-            "AND me <> other\n" +
-            "AND abs(my.rating - their.rating) < 2\n" +
-            "WITH other,r\n" +
-            "MATCH (other)-[otherRating:RATED]->(r2:Restaurant)\n" +
-            "WHERE r2 <> r\n" +
-            "WITH avg(otherRating.rating) AS avgRating, r2, collect(other.username) as other_users\n" +
-            "MATCH (r2) -[:LOCATED_IN]-> (l:Location)\n" +
-            "RETURN r2 as restaurant, avgRating, l.name as location, other_users\n" +
-            "ORDER BY avgRating desc\n" +
-            "LIMIT 25")
-    List<Restaurant> findRestaurantRecommendationsByRating(@Param("userId") Long userId);
-
 
     @Query("MATCH (m:Restaurant)-[:LOCATED_IN]->(location:Location)<-[:LOCATED_IN]-(other:Restaurant)\n" +
             "where id(m) = $restaurantId\n" +

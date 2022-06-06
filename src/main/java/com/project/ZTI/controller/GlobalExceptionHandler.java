@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.util.WebUtils;
 
@@ -22,6 +23,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({NotFoundException.class})
     @Nullable
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public final ResponseEntity<ApiError> handleException(Exception ex, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
 
@@ -31,7 +33,22 @@ public class GlobalExceptionHandler {
             HttpStatus status = HttpStatus.NOT_FOUND;
             NotFoundException notFoundException = (NotFoundException) ex;
             return handleNotFoundException(notFoundException, headers, status, request);
-        }else if(ex instanceof UserAlreadyExistException){
+        }else {
+            log.warn("Unknown exception type: " + ex.getClass().getName());
+            HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return handleExceptionInternal(ex, null, headers, status, request);
+        }
+    }
+
+    @ExceptionHandler({UserAlreadyExistException.class})
+    @Nullable
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public final ResponseEntity<ApiError> handleUserAlreadyExistException(Exception ex, WebRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+
+        log.error("Handling " + ex.getClass().getSimpleName() + " due to " + ex.getMessage());
+
+       if(ex instanceof UserAlreadyExistException){
             HttpStatus status = HttpStatus.BAD_REQUEST;
             UserAlreadyExistException userAlreadyExistException = (UserAlreadyExistException) ex;
             return handleUserAlreadyExistException(userAlreadyExistException, headers, status, request);

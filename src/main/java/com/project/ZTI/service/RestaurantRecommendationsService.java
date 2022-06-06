@@ -93,12 +93,4 @@ public class RestaurantRecommendationsService {
         }
         return restaurantRecommendationsResult;
     }
-
-    public List<Restaurant> getRestaurantRecommendationsByRating(HttpServletRequest request) {
-        User user = authUtility.getUserFromAccessToken(request);
-        if (user != null)
-            return restaurantRepository.findRestaurantRecommendationsByRating(user.getId());
-        else
-            throw new UserNotFoundException();
-    }
 }

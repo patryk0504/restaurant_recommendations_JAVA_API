@@ -6,13 +6,13 @@ import com.project.ZTI.repository.RestaurantRepository;
 import com.project.ZTI.request.AddRestaurantRequest;
 import com.project.ZTI.service.RestaurantAdministrationService;
 import com.project.ZTI.service.RestaurantPropertiesService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +33,7 @@ public class RestaurantAdministrationController {
         this.restaurantAdministrationService = restaurantAdministrationService;
     }
 
+    @Operation(summary = "Add new restaurant to database")
     @PostMapping("/restaurant")
     public ResponseEntity<?> addNewRestaurant(@RequestBody Map<String, AddRestaurantRequest> restaurantRequest){
         AddRestaurantRequest restaurant = restaurantRequest.get("data");
@@ -53,6 +54,7 @@ public class RestaurantAdministrationController {
         return new ResponseEntity<>(restaurantRepository.save(newRestaurant), HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete restaurant by id")
     @DeleteMapping("restaurant/{restaurantId}")
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long restaurantId){
         restaurantAdministrationService.deleteRestaurant(restaurantId);
