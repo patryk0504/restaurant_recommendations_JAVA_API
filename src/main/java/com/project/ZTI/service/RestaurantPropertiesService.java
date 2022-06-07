@@ -7,6 +7,7 @@ import com.project.ZTI.model.Location;
 import com.project.ZTI.repository.CuisineRepository;
 import com.project.ZTI.repository.LocationRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class RestaurantPropertiesService {
     private final LocationRepository locationRepository;
     private final CuisineRepository cuisineRepository;
 
+    @Autowired
     public RestaurantPropertiesService(LocationRepository locationRepository, CuisineRepository cuisineRepository){
         this.locationRepository = locationRepository;
         this.cuisineRepository = cuisineRepository;

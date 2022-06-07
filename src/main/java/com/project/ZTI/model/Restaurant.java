@@ -41,7 +41,4 @@ public class Restaurant {
 
     @Relationship(type = "RATED", direction = Relationship.Direction.INCOMING)
     private List<Rates> rates;
-
-
-
 }

@@ -78,13 +78,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+        //OpenAPI routes
+        http.authorizeRequests().antMatchers(AUTH_WHITELIST).permitAll();
         //user routes
         http.authorizeRequests().antMatchers("/login/**","/api/user/save/**", "/api/token/refresh/**").permitAll();
-
-//        http.authorizeRequests().antMatchers("/api/login/**","/api/user/save/**", "/api/token/refresh/**").permitAll();
-        http.authorizeRequests()
-                .antMatchers(AUTH_WHITELIST).permitAll();
-
         //ADMIN routes
         http.authorizeRequests().antMatchers(GET, "/api/admin/users").hasAnyAuthority(ERole.ROLE_ADMIN.name());
         http.authorizeRequests().antMatchers(POST, "/api/admin/role", "/api/admin/restaurant").hasAnyAuthority(ERole.ROLE_ADMIN.name());
@@ -101,8 +98,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/api/restaurants/recommendations/**").hasAuthority(ERole.ROLE_USER.name());
         http.authorizeRequests().antMatchers(PUT,"/api/restaurant/**");
         http.authorizeRequests().anyRequest().authenticated();
-//        http.addFilter(customAuthenticationFilter);
-//        http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

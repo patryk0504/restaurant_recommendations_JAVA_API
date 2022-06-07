@@ -5,6 +5,7 @@ import com.project.ZTI.model.Location;
 import com.project.ZTI.service.RestaurantPropertiesService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,10 +16,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@Slf4j
 public class RestaurantPropertiesController {
+
     private final RestaurantPropertiesService restaurantPropertiesService;
 
+    @Autowired
     public RestaurantPropertiesController(RestaurantPropertiesService restaurantPropertiesService){
         this.restaurantPropertiesService = restaurantPropertiesService;
     }
